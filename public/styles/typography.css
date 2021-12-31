@@ -1,0 +1,45 @@
+@font-face {
+    font-family: "Golos Text";
+    src: url('../fonts/Golos-Text_Regular.woff2') format('woff2'), url('../fonts/Golos-Text_Regular.woff') format('woff');
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: "Golos Text";
+    src: url('../fonts/Golos-Text_Medium.woff2') format('woff2'), url('../fonts/Golos-Text_Medium.woff') format('woff');
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: "Golos Text";
+    src: url('../fonts/Golos-Text_DemiBold.woff2') format('woff2'), url('../fonts/Golos-Text_DemiBold.woff') format('woff');
+    font-weight: 600;
+}
+
+@font-face {
+    font-family: "Golos Text";
+    src: url('../fonts/Golos-Text_Bold.woff2') format('woff2'), url('../fonts/Golos-Text_Bold.woff') format('woff');
+    font-weight: 700;
+}
+
+@font-face {
+    font-family: "Golos Text";
+    src: url('../fonts/Golos-Text_Black.woff2') format('woff2'), url('../fonts/Golos-Text_Black.woff') format('woff');
+    font-weight: 900;
+}
+
+
+:root, [typography], [data-variables] {
+    --font-family: Golos Text;
+
+    --font-primary: normal normal 16px/150% var(--font-family), apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif;
+    --font-small: normal normal 14px/150% var(--font-family), apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif;
+
+    --font-h1: 700 normal 48px/56px Golos Text, var(--font-family), BlinkMacSystemFont, Segoe UI, Arial, sans-serif;
+    --font-h2: 700 normal 32px/44px Golos Text, var(--font-family), BlinkMacSystemFont, Segoe UI, Arial, sans-serif;
+    --font-h3: 700 normal 24px/32px Golos Text, var(--font-family), BlinkMacSystemFont, Segoe UI, Arial, sans-serif;
+    --font-h4: 700 normal 20px/28px Golos Text, var(--font-family), BlinkMacSystemFont, Segoe UI, Arial, sans-serif;
+    --font-h5: 700 normal 16px/24px Golos Text, var(--font-family), BlinkMacSystemFont, Segoe UI, Arial, sans-serif;
+    --font-h6: 700 normal 14px/22px Golos Text, var(--font-family), BlinkMacSystemFont, Segoe UI, Arial, sans-serif;
+}
+

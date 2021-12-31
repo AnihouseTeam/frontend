@@ -1,17 +1,29 @@
 <!DOCTYPE html>
-<html lang="">
-  <head>
+<html lang="ru" dir="ltr" class="anihouse" global colors typography>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title><%= htmlWebpackPlugin.options.title %></title>
-  </head>
-  <body>
-    <noscript>
-      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
-  </body>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="og:site_name">
+    <meta name="og:locale" content="ru_RU">
+    <meta name="og:type" content="website">
+    <meta name="theme-color" content="#20242c">
+    <meta data-hid="og:url" name="og:url" content="https://anihouse.tv/">
+    <meta data-hid="og:description" name="og:description" content="Встречайте лето вместе с нами c:">
+    <meta data-hid="og:title" name="og:title" content="Творческая студия «AniHouseTV»">
+    <meta data-hid="description" name="description" content="AniHouse (АниХаус). На нашем сайте вы можете посмотреть не только популярные, но и малоизвестные аниме и даже дорамы!">
+    <meta data-hid="og:image" name="og:image" content="images/og-logo.jpg">
+    <link rel="stylesheet" href="styles/typography.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles/variables.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles/common.css" crossorigin="anonymous">
+    <title>AniHouse</title>
+    <link rel="icon" type="image/x-icon" href="images/favicon.png">
+</head>
+<body class="app-body">
+<noscript class="no-js">
+    <strong>Привет! Для того чтобы сайт работал, тебе нужно включить JavaScript в настройках браузера.</strong>
+    <strong>You need to enable JavaScript to run this app.</strong>
+</noscript>
+<div id="app"></div>
+</body>
 </html>

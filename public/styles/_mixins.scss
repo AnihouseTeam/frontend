@@ -1,0 +1,48 @@
+$breakpoint-sizes: ("xs":320px, "sm":540px, "md":720px, "lg":960px, "xl":1140px, "page":1320px);
+
+@mixin flex {
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+@mixin inline-flex {
+  display: -webkit-inline-flex;
+  display: -moz-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+}
+
+@mixin user-drag-none{
+  -webkit-user-drag: none;
+  -moz-user-drag: none;
+  -ms-user-drag: none;
+  user-drag: none;
+}
+
+@mixin styled-button{
+  @include inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  overflow: hidden;
+  position: relative;
+  text-decoration: none;
+  user-select: none;
+  box-sizing: border-box;
+  transition: var(--transition-normal);
+  text-align: center;
+}
+
+@mixin media($minmax, $media) {
+  @each $size, $resolution in $breakpoint-sizes {
+    @if $media == $size {
+      @media only screen and (#{$minmax}-width: $resolution) {
+        @content;
+      }
+    }
+  }
+}
