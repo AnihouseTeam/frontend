@@ -61,7 +61,7 @@
             мы немедленно удалим лицензированный Вами контент.
         </div>
         <div class="text-small footer-copyright">
-          <div class="ani-copy">Copyright © 2018-2021 AniHouse</div>
+          <div class="ani-copy">Copyright © 2018-{{new Date().getFullYear()}} AniHouse</div>
         </div>
       </div>
     </div>

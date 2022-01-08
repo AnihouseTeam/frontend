@@ -7,21 +7,9 @@
             <h1 class="outer-title layout-animate layout-animation-1">FAQ</h1>
             <section class="outer-section questions layout-animate layout-animation-2">
               <h2 class="section-title font-600">Ответы на все часто задаваемые вопросы</h2>
-              <div class="section-wrapper">
-                <h3 class="question font-500">1. Где я могу оставить свой комментарий и поделиться мнением?</h3>
-                <p class="answer">Комментарии напрямую связаны с авторизацией, поэтому на сайте они также будут добавлены позже, но вы можете поделиться своим мнением прямо сейчас в нашей группе VK или в чате Telegram-канала. Все релизы публикуются там.</p>
-              </div>
-              <div class="section-wrapper">
-                <h3 class="question font-500">2. Где я могу оставить свой комментарий и поделиться мнением?</h3>
-                <p class="answer">Комментарии напрямую связаны с авторизацией, поэтому на сайте они также будут добавлены позже, но вы можете поделиться своим мнением прямо сейчас в нашей группе VK или в чате Telegram-канала. Все релизы публикуются там.</p>
-              </div>
-              <div class="section-wrapper">
-                <h3 class="question font-500">3. Где я могу оставить свой комментарий и поделиться мнением?</h3>
-                <p class="answer">Комментарии напрямую связаны с авторизацией, поэтому на сайте они также будут добавлены позже, но вы можете поделиться своим мнением прямо сейчас в нашей группе VK или в чате Telegram-канала. Все релизы публикуются там.</p>
-              </div>
-              <div class="section-wrapper">
-                <h3 class="question font-500">4. Где я могу оставить свой комментарий и поделиться мнением?</h3>
-                <p class="answer">Комментарии напрямую связаны с авторизацией, поэтому на сайте они также будут добавлены позже, но вы можете поделиться своим мнением прямо сейчас в нашей группе VK или в чате Telegram-канала. Все релизы публикуются там.</p>
+              <div class="section-wrapper" v-for="entry in entries" :key="entry.id">
+                <h3 class="question font-500">{{entry.question}}</h3>
+                <p class="answer">{{entry.answer}}</p>
               </div>
             </section>
           </div>
@@ -38,6 +26,14 @@ export default {
   name: "Faq",
   setup() {
     useMeta({title: 'AniHouse - FAQ'})
+  },
+  data() {
+    return {
+      entries: []
+    }
+  },
+  async mounted() {
+    this.entries = await (await fetch(`http://localhost:3001/faq`)).json()
   }
 }
 </script>

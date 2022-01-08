@@ -5,192 +5,24 @@
         <main class="main app-main">
           <div class="outer-wrapper-lg">
             <h1 class="outer-title layout-animate layout-animation-1">Команда проекта</h1>
-            <section class="outer-section project-management layout-animate layout-animation-2">
-              <h2 class="section-title font-600">Руководство проекта</h2>
-              <div class="section-wrapper app-team-grid">
-                <a href="https://vk.com/id274912273" class="team-redirection" target="_blank" rel="noopener">
-                  <div class="team-grid-person bg-color-2 rounded-l flex-center flex-col has-link">
-                    <div class="team-avatar position-relative">
-                      <img class="team-avatar-img rounded-circle" alt src="images/team-avatars/avatar_7.jpg">
+            <section :class="`outer-section ${section.id} layout-animate layout-animation-2`" v-for="section in [
+                  { id: 'staff', title: 'Руководство' },
+                  { id: 'cast',  title: 'Основной состав' },
+                  { id: 'academy', title: 'Академия' },
+                  { id: 'developer', title: 'Разработчики' }
+              ]" :key="section.id">
+                <h2 class="section-title font-600">{{section.title}}</h2>
+                <div class="section-wrapper app-team-grid">
+                  <a :href="member.vk" class="team-redirection" target="_blank" rel="noopener" v-for="member in members.filter(memberr => memberr.role === section.id)" :key="member.id">
+                    <div :class="`team-grid-person bg-color-2 rounded-l flex-center flex-col ${member.vk ? 'has-link' : ''}`">
+                      <div class="team-avatar position-relative">
+                        <img class="team-avatar-img rounded-circle" alt :src="member.avatar">
+                      </div>
+                      <div class="team-nickname text-h4 font-500 text-center">{{member.name}}</div>
+                      <div class="team-description text-h5 font-regular text-center">{{member.description}}</div>
                     </div>
-                    <div class="team-nickname text-h4 font-500 text-center">Hikaro</div>
-                    <div class="team-descrption text-h5 font-regular text-center">Основатель проекта, даббер</div>
-                  </div>
-                </a>
-                <a href="https://vk.com/id330806952" class="team-redirection" target="_blank" rel="noopener">
-                  <div class="team-grid-person bg-color-2 rounded-l flex-center flex-col has-link">
-                    <div class="team-avatar position-relative">
-                      <img class="team-avatar-img rounded-circle" alt src="images/team-avatars/avatar_8.jpg">
-                    </div>
-                    <div class="team-nickname text-h4 font-500 text-center">GLuK</div>
-                    <div class="team-descrption text-h5 font-regular text-center">Администратор discord-сервера</div>
-                  </div>
-                </a>
-                <a href="https://vk.com/id218556632" class="team-redirection" target="_blank" rel="noopener">
-                  <div class="team-grid-person bg-color-2 rounded-l flex-center flex-col has-link">
-                    <div class="team-avatar position-relative">
-                      <img class="team-avatar-img rounded-circle" alt src="images/team-avatars/avatar_11.jpg">
-                    </div>
-                    <div class="team-nickname text-h4 font-500 text-center">DeZeR_HELL</div>
-                    <div class="team-descrption text-h5 font-regular text-center">Куратор академии, даббер, технарь</div>
-                  </div>
-                </a>
-              </div>
-            </section>
-            <section class="outer-section main-cast layout-animate layout-animation-3">
-              <h2 class="section-title font-600">Основной состав</h2>
-              <div class="section-wrapper app-team-grid">
-                <a href="https://vk.com/id96014900" class="team-redirection" target="_blank" rel="noopener">
-                  <div class="team-grid-person bg-color-2 rounded-l flex-center flex-col has-link">
-                    <div class="team-avatar position-relative">
-                      <img class="team-avatar-img rounded-circle" alt src="images/team-avatars/avatar_10.jpg">
-                    </div>
-                    <div class="team-nickname text-h4 font-500 text-center">Hisoka</div>
-                    <div class="team-descrption text-h5 font-regular text-center">Даббер, технарь</div>
-                  </div>
-                </a>
-                <a href="https://vk.com/id18230760" class="team-redirection" target="_blank" rel="noopener">
-                  <div class="team-grid-person bg-color-2 rounded-l flex-center flex-col has-link">
-                    <div class="team-avatar position-relative">
-                      <img class="team-avatar-img rounded-circle" alt src="images/team-avatars/avatar_12.jpg">
-                    </div>
-                    <div class="team-nickname text-h4 font-500 text-center">Qwars</div>
-                    <div class="team-descrption text-h5 font-regular text-center">Технарь, дизайнер, даббер</div>
-                  </div>
-                </a>
-                <a href="https://vk.com/id388094932" class="team-redirection" target="_blank" rel="noopener">
-                  <div class="team-grid-person bg-color-2 rounded-l flex-center flex-col has-link">
-                    <div class="team-avatar position-relative">
-                      <img class="team-avatar-img rounded-circle" alt src="images/team-avatars/avatar_13.jpg">
-                    </div>
-                    <div class="team-nickname text-h4 font-500 text-center">Driver 5070</div>
-                    <div class="team-descrption text-h5 font-regular text-center">Технарь, дизайнер</div>
-                  </div>
-                </a>
-                <a href="https://vk.com/id553911380" class="team-redirection" target="_blank" rel="noopener">
-                  <div class="team-grid-person bg-color-2 rounded-l flex-center flex-col has-link">
-                    <div class="team-avatar position-relative">
-                      <img class="team-avatar-img rounded-circle" alt src="images/team-avatars/avatar_17.jpg">
-                    </div>
-                    <div class="team-nickname text-h4 font-500 text-center">Soft Fox</div>
-                    <div class="team-descrption text-h5 font-regular text-center">Даббер</div>
-                  </div>
-                </a>
-                <a href="https://vk.com/id233162766" class="team-redirection" target="_blank" rel="noopener">
-                  <div class="team-grid-person bg-color-2 rounded-l flex-center flex-col has-link">
-                    <div class="team-avatar position-relative">
-                      <img class="team-avatar-img rounded-circle" alt src="images/team-avatars/avatar_18.jpg">
-                    </div>
-                    <div class="team-nickname text-h4 font-500 text-center">Thehucky</div>
-                    <div class="team-descrption text-h5 font-regular text-center">Даббер</div>
-                  </div>
-                </a>
-                <a href="https://vk.com/id224595858" class="team-redirection" target="_blank" rel="noopener">
-                  <div class="team-grid-person bg-color-2 rounded-l flex-center flex-col has-link">
-                    <div class="team-avatar position-relative">
-                      <img class="team-avatar-img rounded-circle" alt src="images/team-avatars/avatar_20.jpg">
-                    </div>
-                    <div class="team-nickname text-h4 font-500 text-center">M1c</div>
-                    <div class="team-descrption text-h5 font-regular text-center">Даббер</div>
-                  </div>
-                </a>
-                <a href="https://vk.com/id351991833" class="team-redirection" target="_blank" rel="noopener">
-                  <div class="team-grid-person bg-color-2 rounded-l flex-center flex-col has-link">
-                    <div class="team-avatar position-relative">
-                      <img class="team-avatar-img rounded-circle" alt src="images/team-avatars/avatar_21.jpg">
-                    </div>
-                    <div class="team-nickname text-h4 font-500 text-center">Horomi</div>
-                    <div class="team-descrption text-h5 font-regular text-center">Даббер</div>
-                  </div>
-                </a>
-                <a href="https://vk.com/id293401785" class="team-redirection" target="_blank" rel="noopener">
-                  <div class="team-grid-person bg-color-2 rounded-l flex-center flex-col has-link">
-                    <div class="team-avatar position-relative">
-                      <img class="team-avatar-img rounded-circle" alt src="images/team-avatars/avatar_22.jpg">
-                    </div>
-                    <div class="team-nickname text-h4 font-500 text-center">Shinobu Vampir T9lN</div>
-                    <div class="team-descrption text-h5 font-regular text-center">Переводчик, саббер</div>
-                  </div>
-                </a>
-                <a href="https://vk.com/id143838831" class="team-redirection" target="_blank" rel="noopener">
-                  <div class="team-grid-person bg-color-2 rounded-l flex-center flex-col has-link">
-                    <div class="team-avatar position-relative">
-                      <img class="team-avatar-img rounded-circle" alt src="images/team-avatars/avatar_30.jpg">
-                    </div>
-                    <div class="team-nickname text-h4 font-500 text-center">Mosses</div>
-                    <div class="team-descrption text-h5 font-regular text-center">Даббер</div>
-                  </div>
-                </a>
-                <a href="https://vk.com/id215328626" class="team-redirection" target="_blank" rel="noopener">
-                  <div class="team-grid-person bg-color-2 rounded-l flex-center flex-col has-link">
-                    <div class="team-avatar position-relative">
-                      <img class="team-avatar-img rounded-circle" alt src="images/team-avatars/avatar_31.jpg">
-                    </div>
-                    <div class="team-nickname text-h4 font-500 text-center">Fenix</div>
-                    <div class="team-descrption text-h5 font-regular text-center">Даббер</div>
-                  </div>
-                </a>
-                <a href="https://vk.com/id403392845" class="team-redirection" target="_blank" rel="noopener">
-                  <div class="team-grid-person bg-color-2 rounded-l flex-center flex-col has-link">
-                    <div class="team-avatar position-relative">
-                      <img class="team-avatar-img rounded-circle" alt src="images/team-avatars/avatar_35.jpg">
-                    </div>
-                    <div class="team-nickname text-h4 font-500 text-center">Scottyrson</div>
-                    <div class="team-descrption text-h5 font-regular text-center">Переводчик, саббер</div>
-                  </div>
-                </a>
-              </div>
-            </section>
-            <section class="outer-section academy layout-animate layout-animation-4">
-              <h2 class="section-title font-600">Академия</h2>
-              <div class="section-wrapper app-team-grid">
-                <a href="https://vk.com/id277540004" class="team-redirection" target="_blank" rel="noopener">
-                  <div class="team-grid-person bg-color-2 rounded-l flex-center flex-col has-link">
-                    <div class="team-avatar position-relative">
-                      <img class="team-avatar-img rounded-circle" alt src="images/team-avatars/avatar_24.jpg">
-                    </div>
-                    <div class="team-nickname text-h4 font-500 text-center">Happy</div>
-                    <div class="team-descrption text-h5 font-regular text-center">Даббер</div>
-                  </div>
-                </a>
-                <a href="https://vk.com/id162257942" class="team-redirection" target="_blank" rel="noopener">
-                  <div class="team-grid-person bg-color-2 rounded-l flex-center flex-col has-link">
-                    <div class="team-avatar position-relative">
-                      <img class="team-avatar-img rounded-circle" alt src="images/team-avatars/avatar_36.jpg">
-                    </div>
-                    <div class="team-nickname text-h4 font-500 text-center">Midnight_unicorn</div>
-                    <div class="team-descrption text-h5 font-regular text-center">Даббер</div>
-                  </div>
-                </a>
-              </div>
-            </section>
-            <section class="outer-section developers layout-animate layout-animation-5">
-              <h2 class="section-title font-600">Разработчики сайта</h2>
-              <div class="section-wrapper app-team-grid">
-                <div class="team-grid-person bg-color-2 rounded-l flex-center flex-col">
-                  <div class="team-avatar position-relative">
-                    <img class="team-avatar-img rounded-circle" alt src="images/team-avatars/avatar_34.jpg">
-                  </div>
-                  <div class="team-nickname text-h4 font-500 text-center">egor_m</div>
-                  <div class="team-descrption text-h5 font-regular text-center">Front-end разработчик</div>
+                  </a>
                 </div>
-                <div class="team-grid-person bg-color-2 rounded-l flex-center flex-col">
-                  <div class="team-avatar position-relative">
-                    <img class="team-avatar-img rounded-circle" alt src="images/team-avatars/avatar_34.jpg">
-                  </div>
-                  <div class="team-nickname text-h4 font-500 text-center">Zephyr</div>
-                  <div class="team-descrption text-h5 font-regular text-center">Back-end разработчик</div>
-                </div>
-                <a href="https://vk.com/id199902991" class="team-redirection" target="_blank" rel="noopener">
-                  <div class="team-grid-person bg-color-2 rounded-l flex-center flex-col has-link">
-                    <div class="team-avatar position-relative">
-                      <img class="team-avatar-img rounded-circle" alt src="images/team-avatars/avatar_9.jpg">
-                    </div>
-                    <div class="team-nickname text-h4 font-500 text-center">SteMak</div>
-                    <div class="team-descrption text-h5 font-regular text-center">Forced developer</div>
-                  </div>
-                </a>
-              </div>
             </section>
           </div>
         </main>
@@ -206,6 +38,14 @@ export default {
   name: "Team",
   setup() {
     useMeta({title: 'AniHouse - Команда'})
+  },
+  data() {
+    return {
+      members: []
+    }
+  },
+  async mounted() {
+    this.members = await (await fetch(`http://localhost:3001/team`)).json()
   }
 }
 </script>
@@ -326,7 +166,7 @@ export default {
         font-weight: 500;
       }
     }
-    .team-descrption{
+    .team-description{
       color: var(--white-alpha72);
       @include media("max", "md") {
         font: var(--font-h5);

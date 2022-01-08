@@ -39,7 +39,11 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss" type="text/scss">
+@import '../public/styles/common.css';
+@import '../public/styles/variables.css';
+@import '../public/styles/typography.css';
+
 .page-fade-enter-active,
 .page-fade-leave-active {
   --page-transition: all .15s ease;

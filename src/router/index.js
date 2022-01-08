@@ -32,7 +32,7 @@ const routes = [
         component: Faq
     },
     {
-        path: '/View',
+        path: '/view/:id',
         name: 'View',
         component: View
     },

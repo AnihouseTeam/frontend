@@ -1,7 +1,7 @@
 <template>
   <div class="view-root">
     <div class="view-envelope layout-animate layout-animation-envelope">
-      <img class="view-cover" :src="cover">
+      <img class="view-cover" :src="movie.banner">
     </div>
     <div class="layout-root">
       <div class="layout-content">
@@ -9,32 +9,49 @@
           <main class="main app-main">
             <div class="outer-wrapper">
               <section class="view-detalis outer-section">
-                <img class="view-poster layout-animate layout-animation-1" :src="poster">
+                <img class="view-poster layout-animate layout-animation-1" :src="movie.poster">
                 <div class="view-info">
-                  <h2 class="view-title layout-animate layout-animation-2">{{ title }}</h2>
+                  <h2 class="view-title layout-animate layout-animation-2">{{ movie.title }}</h2>
                   <div class="view-meta layout-animate layout-animation-3">
-                    <p class="is-meta view-parameters">{{ year }}, {{ genres }}</p>
-                    <p class="is-meta view-voiced"><span class="font-600 view-names">Озвучили:</span> {{ voiced }}</p>
-                    <p class="is-meta view-sound"><span class="font-600 view-names">Тайминг и работа со звуком:</span> {{ sound }}</p>
+                    <p class="is-meta view-parameters">{{ new Date(movie.created).getFullYear() }}, {{ movie.genres?.map(genre => genre.genre.name).join(', ') }}</p>
+                    <p v-if="movie.dabbers?.length" class="is-meta view-dappers"><span class="font-600 view-names">Озвучили:</span> {{ movie.dabbers?.join(', ') }}</p>
+                    <p v-if="movie.techies?.length" class="is-meta view-techies"><span class="font-600 view-names">Тайминг и работа со звуком:</span> {{ movie.techies?.join(', ') }}</p>
+                    <p v-if="movie.translators?.length" class="is-meta view-translators"><span class="font-600 view-names">Перевод:</span> {{ movie.translators?.join(', ') }}</p>
                   </div>
                   <div class="view-description layout-animate layout-animation-4">
-                    {{ description }}
+                    {{ movie.description }}
                   </div>
                 </div>
               </section>
               <section class="view-watch outer-section layout-animate layout-animation-5">
-                <div class="view-selector">
+                <div class="selector-wrapper">
+                <div class="view-selector" v-if="movie.episodes?.length >= 2">
                   <div class="selector-root">
                     <div class="selector-title">Серия</div>
                     <div class="selector-inner">
-                      <div class="selector-option">
-                        <input type="radio" class="selector-check" name="series" id="series-1" autocomplete="off" checked>
-                        <label class="selector-label" for="series-1">1</label>
+                      <div v-for="(episode, index) in movie.episodes" :key="episode.id" class="selector-option">
+                        <input type="radio" class="selector-check" name="series" :id="`series-${index}`" autocomplete="off" :checked="episodeSelected === index" v-on:click="episodeSelected = index">
+                        <label class="selector-label" :for="`series-${index}`">{{ index + 1 }}</label>
                       </div>
                     </div>
                   </div>
                 </div>
-                <iframe class="view-embed" width="560" height="315" src="https://www.youtube.com/embed/lAtKkA0Ea0s" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <div>
+                  <div class="selector-title">Плеер</div>
+                <Listbox v-model="playerSelected">
+                        <div class="options-wrapper">
+                          <ListboxButton class="position-relative app-inputs-padding filter-option-button">Жанр: {{ playerSelected }}</ListboxButton>
+                          <ListboxOptions class="position-absolute filter-option-list bg-color-3 z-1001">
+                            <ListboxOption v-for="player in players" :key="player">
+                              {{player}}
+                            </ListboxOption>
+                          </ListboxOptions>
+                        </div>
+                      </Listbox>
+                </div>
+                </div>
+                <!-- <iframe class="view-embed" width="560" height="315" src="https://www.youtube.com/embed/lAtKkA0Ea0s" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
+                <iframe  class="view-embed" width='560px' height='315px' :src='`https://player.vimeo.com/video/${movie.episodes && movie.episodes[episodeSelected].vimeoId}?&title=0&color=7F6DF2&byline=0&portrait=0`'></iframe>
               </section>
             </div>
           </main>
@@ -46,26 +63,45 @@
 
 <script>
 import {useMeta} from 'vue-meta'
+import {
+  Listbox,
+  ListboxButton,
+  ListboxOptions,
+  ListboxOption,
+} from '@headlessui/vue'
 
 export default {
   name: "View",
-  data() {
-    return {
-      title: "Чёрная лагуна",
-      year: "2006",
-      genres: "Сэйнэн, Драма, Комедия, Убийцы, Боевик, Экшен",
-      voiced: "DeZeR_HELL, Horomi, Soft Fox, Hisoka, BiPs",
-      sound: "DeZeR_HELL",
-      description: "Рокуро нужно доставить диск с важными данными в юго-восточную Азию, но ещё по пути туда он встречает неприятности: на корабль нападают, а его берут в заложники. Но информация на диске настолько важна, что за Рокуро теперь охотятся его старые работодатели, и он по воле случая становится сотрудником \"Чёрной лагуны\". Какие же приключения ждут его?",
-      poster: "images/anime-posters/poster_23.jpg",
-      cover: "images/anime-banners/banner_23.jpg"
-    }
+  components: {
+    Listbox,
+    ListboxButton,
+    ListboxOptions,
+    ListboxOption,
   },
   setup() {
     useMeta({
         title: 'AniHouse - Чёрная лагуна'
     })
   },
+  data() {
+    return {
+      episodeSelected: 0,
+      playerSelected: "",
+      players: [],
+      movie: {}
+    }
+  },
+  async started() {
+    const movieData = await (await fetch(`http://localhost:3001/movie/${this.$route.params.id}`)).json()
+
+    if(!movieData) await this.$router.push('/')
+
+    this.players = Object.keys(movieData.episodes[0].players)
+    console.log(this.players)
+    this.playerSelected = this.$ref(this.players[0])
+
+    this.movie = movieData
+  }
 }
 </script>
 
@@ -154,7 +190,9 @@ export default {
     border-radius: var(--border-radius-m);
     width: 14rem;
     margin-right: var(--space-3xl);
-    height: var(--size-max);
+    // height: var(--size-max);
+    aspect-ratio: 51/70;
+    background: var(--bg-2);
     @include media("max", "md") {
       margin: 0 auto var(--space-3xl);
     }
@@ -212,10 +250,6 @@ export default {
     display: inline-block;
   }
 
-  .view-selector{
-    margin-bottom: var(--space-2xl);
-  }
-
   .selector-check:checked+.selector-label{
     --selector-border: #8571fd;
     background-color: var(--color-primary);
@@ -237,6 +271,68 @@ export default {
 @keyframes fadeInLayout {
   0% {
     opacity: 0;
+  }
+}
+
+.filter-options{
+  width: var(--size-max);
+}
+
+.options-wrapper{
+  border-radius: var(--border-radius-l);
+  background: var(--bg-3);
+}
+
+.filter-option-button{
+  cursor: pointer;
+  width: var(--size-max);
+  box-sizing: border-box;
+}
+
+.filter-option-list{
+  display: block;
+  border-radius: var(--border-radius-l);
+  margin-top: var(--space-2xs);
+  width: var(--size-max);
+  max-height: 300px;
+  overflow: scroll;
+  scrollbar-width: none;
+  &::-webkit-scrollbar{
+    display: none;
+  }
+  li{
+    display: flex;
+    flex-direction: column;
+    &:first-child{
+      border-radius: 12px 12px 0 0;
+    }
+    &:last-child{
+      border-radius: 0 0 12px 12px;
+    }
+    padding: var(--inputs-padding);
+    background: var(--bg-3);
+    &:hover{
+      background: var(--bg-4);
+    }
+    cursor: pointer;
+  }
+}
+
+.options-wrapper{
+  position: relative;
+  height: 2.5rem;
+  margin-bottom: var(--space-2xs);
+}
+
+.selector-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: var(--space-2xl);
+  gap: var(--space-m);
+  @include media("max", "md") {
+    flex-direction: column-reverse;
+    align-items: flex-start;
   }
 }
 </style>
