@@ -92,11 +92,11 @@
                 <div class="search-filter" v-show="searchFilter">
                   <div class="search-filter-wrapper display-flex">
                     <div class="filter-options">
-                      <Listbox v-model="selectedGenre">
+                      <Listbox v-model="genreSelected">
                         <div class="options-wrapper">
-                          <ListboxButton class="position-relative app-inputs-padding filter-option-button">Жанр: {{ selectedGenre.name }}</ListboxButton>
+                          <ListboxButton class="position-relative app-inputs-padding filter-option-button">Жанр: {{ genreSelected }}</ListboxButton>
                           <ListboxOptions class="position-absolute filter-option-list bg-color-3 z-1001">
-                            <ListboxOption v-for="genre in genres" :key="genre" :value="genre">
+                            <ListboxOption v-for="genre in genres" :key="genre.name" :value="genre.name">
                               {{ genre.name }}
                             </ListboxOption>
                           </ListboxOptions>
@@ -104,36 +104,36 @@
                       </Listbox>
                     </div>
                     <div class="filter-options">
-                      <Listbox v-model="selectedGenre">
+                      <Listbox v-model="ageSelected">
                         <div class="options-wrapper">
-                          <ListboxButton class="position-relative app-inputs-padding filter-option-button">Возраст: {{ selectedGenre.name }}</ListboxButton>
+                          <ListboxButton class="position-relative app-inputs-padding filter-option-button">Возраст: {{ ageSelected }}</ListboxButton>
                           <ListboxOptions class="position-absolute filter-option-list bg-color-3 z-1001">
-                            <ListboxOption v-for="genre in genres" :key="genre" :value="genre">
-                              {{ genre.name }}
+                            <ListboxOption v-for="age in ages" :key="age" :value="age">
+                              {{ age }}
                             </ListboxOption>
                           </ListboxOptions>
                         </div>
                       </Listbox>
                     </div>
                     <div class="filter-options">
-                      <Listbox v-model="selectedGenre">
+                      <Listbox v-model="yearSelected">
                         <div class="options-wrapper">
-                          <ListboxButton class="position-relative app-inputs-padding filter-option-button">Год выпуска: {{ selectedGenre.name }}</ListboxButton>
+                          <ListboxButton class="position-relative app-inputs-padding filter-option-button">Год: {{ yearSelected }}</ListboxButton>
                           <ListboxOptions class="position-absolute filter-option-list bg-color-3 z-1001">
-                            <ListboxOption v-for="genre in genres" :key="genre" :value="genre">
-                              {{ genre.name }}
+                            <ListboxOption v-for="year in years" :key="year" :value="year">
+                              {{ year }}
                             </ListboxOption>
                           </ListboxOptions>
                         </div>
                       </Listbox>
                     </div>
                     <div class="filter-options">
-                      <Listbox v-model="selectedGenre">
+                      <Listbox v-model="typeSelected">
                         <div class="options-wrapper">
-                          <ListboxButton class="position-relative app-inputs-padding filter-option-button">Тип: {{ selectedGenre.name }}</ListboxButton>
+                          <ListboxButton class="position-relative app-inputs-padding filter-option-button">Тип: {{ typeSelected }}</ListboxButton>
                           <ListboxOptions class="position-absolute filter-option-list bg-color-3 z-1001">
-                            <ListboxOption v-for="genre in genres" :key="genre" :value="genre">
-                              {{ genre.name }}
+                            <ListboxOption v-for="type in types" :key="type" :value="type">
+                              {{ type }}
                             </ListboxOption>
                           </ListboxOptions>
                         </div>
@@ -144,22 +144,10 @@
               </transition>
               <div class="search-suggest">
                 <div class="search-suggest-wrapper app-previews-grid">
-                  <div class="suggest">
+                  <div class="suggest" v-for="movie in movieData?.filter(m => ageSelected ? m.age === ageSelected : true).filter(m => yearSelected ? m.year === yearSelected : true)" :key="movie.id">
                     <router-link to="view" class="router-link flex-col">
                       <img class="suggest-img" src="images/anime-posters/poster_3.jpg">
                       <p class="suggest-title">Добро пожаловать в «Академию Сетон!»</p>
-                    </router-link>
-                  </div>
-                  <div class="suggest">
-                    <router-link to="view" class="router-link flex-col">
-                      <img class="suggest-img" src="images/anime-posters/poster_4.jpg">
-                      <p class="suggest-title">Туалетный мальчик Ханако‑кун</p>
-                    </router-link>
-                  </div>
-                  <div class="suggest">
-                    <router-link to="view" class="router-link flex-col">
-                      <img class="suggest-img" src="images/anime-posters/poster_19.jpg">
-                      <p class="suggest-title">Прославленный: Спецвыпуски</p>
                     </router-link>
                   </div>
                   <!--            <div class="suggest">-->
@@ -210,7 +198,16 @@ export default {
   data() {
     return {
       scrolled: false,
-      searchFilter: false
+      searchFilter: false,
+      genres: [],
+      genreSelected: "",
+      years: [],
+      yearSelected: "",
+      ages: [],
+      ageSelected: "",
+      types: [],
+      typeSelected: "",
+      movie: {}
     }
   },
   methods: {
@@ -224,32 +221,68 @@ export default {
   unmounted() {
    window.removeEventListener('scroll', this.handleScroll);
   },
-  setup() {
-    const genres = [
-      { name: 'Боевик' },
-      { name: 'Демоны' },
-      { name: 'Детектив' },
-      { name: 'Драма' },
-      { name: 'Дружба' },
-      { name: 'Искусство' },
-      { name: 'История' },
-      { name: 'Комедия' },
-      { name: 'Магия' },
-      { name: 'Мистика' },
-      { name: 'Пародия' },
-      { name: 'Мистика' },
-      { name: 'Мистика' },
-      { name: 'Повседневность' },
-      { name: 'Приключения' },
-      { name: 'Психология' },
-      { name: 'Романтика' },
-    ]
-    const selectedGenre = ref(genres[0])
+  async mounted() {
+    const movieData = [{
+      "id": 1,
+      "title": "name",
+      "description": "desc",
+      "poster": "link",
+      "banner": "link",
+      "typeId": 1,
+      "year": 1982,
+      "age": "G+",
+      "created": "2022-01-08T15:46:58.568Z",
+      "visible": true,
+      "deleted": false,
+      "dabbers": [
+        "hikaro"
+      ],
+      "techies": [
+        "zephyr"
+      ],
+      "translators": [
+        "egorm"
+      ],
+      "episodesTotal": 20,
+      "carouselPosition": 0,
+      "episodes": [
+        {
+          "id": 1,
+          "movieId": 1,
+          "players": {
+            "google": "link"
+          },
+          "created": "2022-01-08T15:47:16.243Z"
+        }
+      ],
+      "genres": [
+        {
+          "movieId": 1,
+          "genreId": 1,
+          "genre": {
+            "id": 1,
+            "name": "genre"
+          }
+        }
+      ]
+    }]
 
-    return {
-      genres,
-      selectedGenre,
-    }
+    this.genres = [{
+      id: 2,
+      name: "genre1"
+    }]
+    this.ages = ['G+', 'PG-13+', 'R+']
+    this.types = ['Дорама', 'Сериал', 'Фандаб', 'Фильм']
+
+    this.genreSelected = ref(this.genres);
+    this.ageSelected = ref(this.ages);
+
+    this.years = [...new Set(movieData.map(movie => movie.year))]
+    this.yearSelected = ref(this.year);
+
+    this.typeSelected = ref(this.types);
+
+    this.movie = await Promise.resolve(movieData)
   },
 }
 </script>

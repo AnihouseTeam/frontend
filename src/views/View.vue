@@ -13,10 +13,14 @@
                 <div class="view-info">
                   <h2 class="view-title layout-animate layout-animation-2">{{ movie.title }}</h2>
                   <div class="view-meta layout-animate layout-animation-3">
-                    <p class="is-meta view-parameters">{{ new Date(movie.created).getFullYear() }}, {{ movie.genres?.map(genre => genre.genre.name).join(', ') }}</p>
-                    <p v-if="movie.dabbers?.length" class="is-meta view-dappers"><span class="font-600 view-names">Озвучили:</span> {{ movie.dabbers?.join(', ') }}</p>
-                    <p v-if="movie.techies?.length" class="is-meta view-techies"><span class="font-600 view-names">Тайминг и работа со звуком:</span> {{ movie.techies?.join(', ') }}</p>
-                    <p v-if="movie.translators?.length" class="is-meta view-translators"><span class="font-600 view-names">Перевод:</span> {{ movie.translators?.join(', ') }}</p>
+                    <p class="is-meta view-parameters">{{ new Date(movie.created).getFullYear() }},
+                      {{ movie.genres?.map(genre => genre.genre.name).join(', ') }}</p>
+                    <p v-if="movie.dabbers?.length" class="is-meta view-dappers"><span class="font-600 view-names">Озвучили:</span>
+                      {{ movie.dabbers?.join(', ') }}</p>
+                    <p v-if="movie.techies?.length" class="is-meta view-techies"><span class="font-600 view-names">Тайминг и работа со звуком:</span>
+                      {{ movie.techies?.join(', ') }}</p>
+                    <p v-if="movie.translators?.length" class="is-meta view-translators"><span
+                        class="font-600 view-names">Перевод:</span> {{ movie.translators?.join(', ') }}</p>
                   </div>
                   <div class="view-description layout-animate layout-animation-4">
                     {{ movie.description }}
@@ -25,33 +29,39 @@
               </section>
               <section class="view-watch outer-section layout-animate layout-animation-5">
                 <div class="selector-wrapper">
-                <div class="view-selector" v-if="movie.episodes?.length >= 2">
-                  <div class="selector-root">
-                    <div class="selector-title">Серия</div>
-                    <div class="selector-inner">
-                      <div v-for="(episode, index) in movie.episodes" :key="episode.id" class="selector-option">
-                        <input type="radio" class="selector-check" name="series" :id="`series-${index}`" autocomplete="off" :checked="episodeSelected === index" v-on:click="episodeSelected = index">
-                        <label class="selector-label" :for="`series-${index}`">{{ index + 1 }}</label>
+                  <div class="view-selector" v-if="movie.episodes?.length >= 2">
+                    <div class="selector-root">
+                      <div class="selector-title">Серия</div>
+                      <div class="selector-inner">
+                        <div v-for="(episode, index) in movie.episodes" :key="episode.id" class="selector-option">
+                          <input type="radio" class="selector-check" name="series" :id="`series-${index}`"
+                                 autocomplete="off" :checked="episodeSelected === index"
+                                 v-on:click="episodeSelected = index">
+                          <label class="selector-label" :for="`series-${index}`">{{ index + 1 }}</label>
+                        </div>
                       </div>
                     </div>
                   </div>
+                  <div>
+                    <div class="selector-title">Плеер</div>
+                    <Listbox v-model="playerSelected">
+                      <div class="options-wrapper">
+                        <ListboxButton class="position-relative app-inputs-padding filter-option-button">Плеер:
+                          {{ playerSelected }}
+                        </ListboxButton>
+                        <ListboxOptions class="position-absolute filter-option-list bg-color-3 z-3">
+                          <ListboxOption v-for="player in players" :key="player" :value="player">
+                            {{ player }}
+                          </ListboxOption>
+                        </ListboxOptions>
+                      </div>
+                    </Listbox>
+                  </div>
                 </div>
-                <div>
-                  <div class="selector-title">Плеер</div>
-                <Listbox v-model="playerSelected">
-                        <div class="options-wrapper">
-                          <ListboxButton class="position-relative app-inputs-padding filter-option-button">Жанр: {{ playerSelected }}</ListboxButton>
-                          <ListboxOptions class="position-absolute filter-option-list bg-color-3 z-1001">
-                            <ListboxOption v-for="player in players" :key="player">
-                              {{player}}
-                            </ListboxOption>
-                          </ListboxOptions>
-                        </div>
-                      </Listbox>
-                </div>
-                </div>
-                <!-- <iframe class="view-embed" width="560" height="315" src="https://www.youtube.com/embed/lAtKkA0Ea0s" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
-                <iframe  class="view-embed" width='560px' height='315px' :src='`https://player.vimeo.com/video/${movie.episodes && movie.episodes[episodeSelected].vimeoId}?&title=0&color=7F6DF2&byline=0&portrait=0`'></iframe>
+                <!-- <iframe class="view-embed" width='560px' height='315px'
+                        :src='`https://player.vimeo.com/video/${movie.episodes && movie.episodes[episodeSelected].vimeoId}?&title=0&color=7F6DF2&byline=0&portrait=0`'></iframe>-->
+               <iframe class="view-embed" width='560px' height='315px'
+                       :src="playerEmbed[playerSelected]"></iframe>
               </section>
             </div>
           </main>
@@ -69,6 +79,7 @@ import {
   ListboxOptions,
   ListboxOption,
 } from '@headlessui/vue'
+import {ref} from "vue";
 
 export default {
   name: "View",
@@ -78,30 +89,79 @@ export default {
     ListboxOptions,
     ListboxOption,
   },
-  setup() {
-    useMeta({
-        title: 'AniHouse - Чёрная лагуна'
-    })
-  },
   data() {
     return {
       episodeSelected: 0,
       playerSelected: "",
+      playerEmbed: "",
       players: [],
+      movieTitle: "",
       movie: {}
     }
   },
-  async started() {
-    const movieData = await (await fetch(`http://localhost:3001/movie/${this.$route.params.id}`)).json()
 
-    if(!movieData) await this.$router.push('/')
+  async mounted() {
+    // const movieData = await (await fetch(`http://localhost:3001/movie/${this.$route.params.id}`)).json()
+    const movieData = {
+      id: 1,
+      title: "ИМЯ",
+      description: "ОПИСАНИЕ",
+      poster: "link",
+      banner: "link",
+      typeId: 1,
+      created: "2022-01-08T15:46:58.568Z",
+      visible: true,
+      deleted: false,
+      dabbers: [
+        "13123"
+      ],
+      techies: [
+        "123123"
+      ],
+      translators: [
+        "123123"
+      ],
+      episodesTotal: 20,
+      carouselPosition: 0,
+      episodes: [
+        {
+          id: 1,
+          movieId: 1,
+          players: {
+            mega: "https://mega.nz/embed/UF1yVRrT#LB00r9oRUUgK6eIEj8wYYTsqN4r3Qx15nKvmKWXUqG8",
+            sibnet: "https://video.sibnet.ru/shell.php?videoid=3990183&share=0",
+            google: "https://drive.google.com/file/d/1DmXvrPQ8BE4LGi-EAlcEp97dwesOu5mH/preview",
+            vk: "https://vk.com/video_ext.php?oid=-175912030&id=456239035&hash=8fa355c905f2fef8&hd=2",
+            ok: "https://ok.ru/videoembed/2043669645944",
+            youtube: "https://www.youtube.com/embed/GfyczBf37ss",
+          },
+          created: "2022-01-08T15:47:16.243Z"
+        }
+      ],
+      genres: [
+        {
+          movieId: 1,
+          genreId: 1,
+          genre: {
+            id: 1,
+            name: "genre"
+          }
+        }
+      ]
+    };
 
+    useMeta({
+      title: 'AniHouse - ' + movieData.title
+    })
+
+    //if (!movieData) await this.$router.push('/')
     this.players = Object.keys(movieData.episodes[0].players)
-    console.log(this.players)
-    this.playerSelected = this.$ref(this.players[0])
+    this.playerSelected = ref(this.players[0])
+    this.playerEmbed = movieData.episodes[0].players;
 
-    this.movie = movieData
-  }
+    //this.movie = movieData
+    this.movie = await Promise.resolve(movieData)
+  },
 }
 </script>
 
@@ -152,6 +212,7 @@ export default {
   position: absolute;
   border-radius: var(--border-radius-m);
   top: 0;
+
   &:after {
     content: "";
     top: 0;
@@ -186,6 +247,7 @@ export default {
   @include media("max", "md") {
     flex-direction: column;
   }
+
   .view-poster {
     border-radius: var(--border-radius-m);
     width: 14rem;
@@ -197,41 +259,45 @@ export default {
       margin: 0 auto var(--space-3xl);
     }
   }
-  .view-title{
+
+  .view-title {
     margin-bottom: var(--space-m);
   }
-  .view-names{
+
+  .view-names {
     margin-right: var(--space-xs);
   }
-  .view-meta{
+
+  .view-meta {
     margin-bottom: var(--space-xl);
-    .is-meta:not(:last-child){
+
+    .is-meta:not(:last-child) {
       margin-bottom: var(--space-2xs);
     }
   }
 }
 
-.view-watch{
-  .view-embed{
+.view-watch {
+  .view-embed {
     aspect-ratio: 16 / 9;
     width: 100%;
     border-radius: var(--border-radius-m);
     height: auto;
   }
 
-  .selector-check{
+  .selector-check {
     position: absolute;
     clip: rect(0, 0, 0, 0);
     pointer-events: none;
   }
 
-  .selector-option:last-child{
-    .selector-label{
+  .selector-option:last-child {
+    .selector-label {
       margin-right: 0;
     }
   }
 
-  .selector-label{
+  .selector-label {
     @include styled-button;
     border: 1px solid var(--bg-3);
     background-color: var(--bg-2);
@@ -242,21 +308,21 @@ export default {
     margin-bottom: var(--space-2xs);
   }
 
-  .selector-title{
+  .selector-title {
     margin-bottom: var(--space-s);
   }
 
-  .selector-option{
+  .selector-option {
     display: inline-block;
   }
 
-  .selector-check:checked+.selector-label{
+  .selector-check:checked + .selector-label {
     --selector-border: #8571fd;
     background-color: var(--color-primary);
     border: 1px solid var(--selector-border);
   }
 
-  .view-selector{
+  .view-selector {
     @include flex;
   }
 }
@@ -274,22 +340,22 @@ export default {
   }
 }
 
-.filter-options{
+.filter-options {
   width: var(--size-max);
 }
 
-.options-wrapper{
+.options-wrapper {
   border-radius: var(--border-radius-l);
   background: var(--bg-3);
 }
 
-.filter-option-button{
+.filter-option-button {
   cursor: pointer;
   width: var(--size-max);
   box-sizing: border-box;
 }
 
-.filter-option-list{
+.filter-option-list {
   display: block;
   border-radius: var(--border-radius-l);
   margin-top: var(--space-2xs);
@@ -297,28 +363,35 @@ export default {
   max-height: 300px;
   overflow: scroll;
   scrollbar-width: none;
-  &::-webkit-scrollbar{
+
+  &::-webkit-scrollbar {
     display: none;
   }
-  li{
+
+  li {
     display: flex;
     flex-direction: column;
-    &:first-child{
+
+    &:first-child {
       border-radius: 12px 12px 0 0;
     }
-    &:last-child{
+
+    &:last-child {
       border-radius: 0 0 12px 12px;
     }
+
     padding: var(--inputs-padding);
     background: var(--bg-3);
-    &:hover{
+
+    &:hover {
       background: var(--bg-4);
     }
+
     cursor: pointer;
   }
 }
 
-.options-wrapper{
+.options-wrapper {
   position: relative;
   height: 2.5rem;
   margin-bottom: var(--space-2xs);
