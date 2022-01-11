@@ -96,8 +96,8 @@
                         <div class="options-wrapper">
                           <ListboxButton class="position-relative app-inputs-padding filter-option-button">Жанр: {{ genreSelected }}</ListboxButton>
                           <ListboxOptions class="position-absolute filter-option-list bg-color-3 z-1001">
-                            <ListboxOption v-for="genre in genres" :key="genre.name" :value="genre.name">
-                              {{ genre.name }}
+                            <ListboxOption v-for="genre in genres" :key="genre" :value="genre">
+                              {{ genre }}
                             </ListboxOption>
                           </ListboxOptions>
                         </div>
@@ -144,7 +144,7 @@
               </transition>
               <div class="search-suggest">
                 <div class="search-suggest-wrapper app-previews-grid">
-                  <div class="suggest" v-for="movie in movieData?.filter(m => ageSelected ? m.age === ageSelected : true).filter(m => yearSelected ? m.year === yearSelected : true)" :key="movie.id">
+                  <div class="suggest" v-for="movie in movieData?.filter(m => ageSelected ? m.age === ageSelected : true).filter(m => yearSelected ? m.year === yearSelected : true).filter(m => genreSelected ? m.genres.some(genre => genre.name === genreSelected) : true).filter(m => typeSelected ? m.types.some(types => types.name === typeSelected) : true)" :key="movie.id">
                     <router-link to="view" class="router-link flex-col">
                       <img class="suggest-img" src="images/anime-posters/poster_3.jpg">
                       <p class="suggest-title">Добро пожаловать в «Академию Сетон!»</p>
@@ -207,7 +207,7 @@ export default {
       ageSelected: "",
       types: [],
       typeSelected: "",
-      movie: {}
+      movie: []
     }
   },
   methods: {
@@ -222,67 +222,24 @@ export default {
    window.removeEventListener('scroll', this.handleScroll);
   },
   async mounted() {
-    const movieData = [{
-      "id": 1,
-      "title": "name",
-      "description": "desc",
-      "poster": "link",
-      "banner": "link",
-      "typeId": 1,
-      "year": 1982,
-      "age": "G+",
-      "created": "2022-01-08T15:46:58.568Z",
-      "visible": true,
-      "deleted": false,
-      "dabbers": [
-        "hikaro"
-      ],
-      "techies": [
-        "zephyr"
-      ],
-      "translators": [
-        "egorm"
-      ],
-      "episodesTotal": 20,
-      "carouselPosition": 0,
-      "episodes": [
-        {
-          "id": 1,
-          "movieId": 1,
-          "players": {
-            "google": "link"
-          },
-          "created": "2022-01-08T15:47:16.243Z"
-        }
-      ],
-      "genres": [
-        {
-          "movieId": 1,
-          "genreId": 1,
-          "genre": {
-            "id": 1,
-            "name": "genre"
-          }
-        }
-      ]
-    }]
+    const movieData = await (await fetch('http://localhost:3001/movie')).json()
 
-    this.genres = [{
-      id: 2,
-      name: "genre1"
-    }]
-    this.ages = ['G+', 'PG-13+', 'R+']
-    this.types = ['Дорама', 'Сериал', 'Фандаб', 'Фильм']
+    this.genres = (await (await fetch('http://localhost:3001/genre')).json()).map(genre => genre.name)
+    console.log(this.genres[0])
 
-    this.genreSelected = ref(this.genres);
-    this.ageSelected = ref(this.ages);
+    this.ages = [...new Set(movieData.map(movie => movie.age))]
+    this.types = (await (await fetch('http://localhost:3001/type')).json()).map(type => type.name)
+
+
+    this.genreSelected = ref(this.genres[0]);
+    this.ageSelected = ref(this.ages[0]);
 
     this.years = [...new Set(movieData.map(movie => movie.year))]
-    this.yearSelected = ref(this.year);
+    this.yearSelected = ref(this.year[0]);
 
-    this.typeSelected = ref(this.types);
+    this.typeSelected = ref(this.types[0]);
 
-    this.movie = await Promise.resolve(movieData)
+    this.movie = movieData
   },
 }
 </script>
@@ -305,7 +262,7 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
+  right: 0;  
   transition: var(--transition-normal);
 }
 

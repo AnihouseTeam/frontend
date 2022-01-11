@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import {useMeta} from 'vue-meta'
+// import {useMeta} from 'vue-meta'
 import {
   Listbox,
   ListboxButton,
@@ -101,66 +101,20 @@ export default {
   },
 
   async mounted() {
-    // const movieData = await (await fetch(`http://localhost:3001/movie/${this.$route.params.id}`)).json()
-    const movieData = {
-      id: 1,
-      title: "ИМЯ",
-      description: "ОПИСАНИЕ",
-      poster: "link",
-      banner: "link",
-      typeId: 1,
-      created: "2022-01-08T15:46:58.568Z",
-      visible: true,
-      deleted: false,
-      dabbers: [
-        "13123"
-      ],
-      techies: [
-        "123123"
-      ],
-      translators: [
-        "123123"
-      ],
-      episodesTotal: 20,
-      carouselPosition: 0,
-      episodes: [
-        {
-          id: 1,
-          movieId: 1,
-          players: {
-            mega: "https://mega.nz/embed/UF1yVRrT#LB00r9oRUUgK6eIEj8wYYTsqN4r3Qx15nKvmKWXUqG8",
-            sibnet: "https://video.sibnet.ru/shell.php?videoid=3990183&share=0",
-            google: "https://drive.google.com/file/d/1DmXvrPQ8BE4LGi-EAlcEp97dwesOu5mH/preview",
-            vk: "https://vk.com/video_ext.php?oid=-175912030&id=456239035&hash=8fa355c905f2fef8&hd=2",
-            ok: "https://ok.ru/videoembed/2043669645944",
-            youtube: "https://www.youtube.com/embed/GfyczBf37ss",
-          },
-          created: "2022-01-08T15:47:16.243Z"
-        }
-      ],
-      genres: [
-        {
-          movieId: 1,
-          genreId: 1,
-          genre: {
-            id: 1,
-            name: "genre"
-          }
-        }
-      ]
-    };
+    const movieData = await (await fetch(`http://localhost:3001/movie/${this.$route.params.id}`)).json()
 
-    useMeta({
-      title: 'AniHouse - ' + movieData.title
-    })
+    if (!movieData) await this.$router.push('/')
 
-    //if (!movieData) await this.$router.push('/')
     this.players = Object.keys(movieData.episodes[0].players)
     this.playerSelected = ref(this.players[0])
     this.playerEmbed = movieData.episodes[0].players;
 
     //this.movie = movieData
-    this.movie = await Promise.resolve(movieData)
+    this.movie = movieData
+
+    // useMeta({
+    //   title: 'AniHouse - ' + movieData.title
+    // })
   },
 }
 </script>
