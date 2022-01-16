@@ -65,7 +65,7 @@
             <div class="search-inner">
               <div class="search-suggest-input display-flex">
                 <div class="search-input-wrapper position-relative">
-                  <input type="search" class="search-input hide-on-focus" placeholder="Поиск аниме и дорам..." autofocus>
+                  <input type="search" v-model="inputsearch" class="search-input hide-on-focus" placeholder="Поиск аниме и дорам..." autofocus>
                   <svg class="search-icon position-absolute" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path class="svg-stroke-current" d="M9.0625 15.625C12.6869 15.625 15.625 12.6869 15.625 9.0625C15.625 5.43813 12.6869 2.5 9.0625 2.5C5.43813 2.5 2.5 5.43813 2.5 9.0625C2.5 12.6869 5.43813 15.625 9.0625 15.625Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     <path class="svg-stroke-current" d="M13.7026 13.7031L17.4995 17.5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -94,10 +94,13 @@
                     <div class="filter-options">
                       <Listbox v-model="genreSelected">
                         <div class="options-wrapper">
-                          <ListboxButton class="position-relative app-inputs-padding filter-option-button">Жанр: {{ genreSelected }}</ListboxButton>
+                          <ListboxButton class="position-relative app-inputs-padding filter-option-button">Жанр: {{ getGenreText }}</ListboxButton>
                           <ListboxOptions class="position-absolute filter-option-list bg-color-3 z-1001">
-                            <ListboxOption v-for="genre in genres" :key="genre" :value="genre">
-                              {{ genre }}
+                            <ListboxOption :value="null">
+                              Не выбрано
+                            </ListboxOption>
+                            <ListboxOption v-for="genre in genres" selected :key="genre.name" :value="genre.id">
+                              {{ genre.name }}
                             </ListboxOption>
                           </ListboxOptions>
                         </div>
@@ -108,6 +111,9 @@
                         <div class="options-wrapper">
                           <ListboxButton class="position-relative app-inputs-padding filter-option-button">Возраст: {{ ageSelected }}</ListboxButton>
                           <ListboxOptions class="position-absolute filter-option-list bg-color-3 z-1001">
+                            <ListboxOption :value="null">
+                              Не выбрано
+                            </ListboxOption>
                             <ListboxOption v-for="age in ages" :key="age" :value="age">
                               {{ age }}
                             </ListboxOption>
@@ -120,6 +126,9 @@
                         <div class="options-wrapper">
                           <ListboxButton class="position-relative app-inputs-padding filter-option-button">Год: {{ yearSelected }}</ListboxButton>
                           <ListboxOptions class="position-absolute filter-option-list bg-color-3 z-1001">
+                            <ListboxOption :value="null">
+                              Не выбрано
+                            </ListboxOption>
                             <ListboxOption v-for="year in years" :key="year" :value="year">
                               {{ year }}
                             </ListboxOption>
@@ -130,10 +139,13 @@
                     <div class="filter-options">
                       <Listbox v-model="typeSelected">
                         <div class="options-wrapper">
-                          <ListboxButton class="position-relative app-inputs-padding filter-option-button">Тип: {{ typeSelected }}</ListboxButton>
+                          <ListboxButton class="position-relative app-inputs-padding filter-option-button">Тип: {{ getTypeText }}</ListboxButton>
                           <ListboxOptions class="position-absolute filter-option-list bg-color-3 z-1001">
-                            <ListboxOption v-for="type in types" :key="type" :value="type">
-                              {{ type }}
+                            <ListboxOption :value="null">
+                              Не выбрано
+                            </ListboxOption>
+                            <ListboxOption v-for="type in types" :key="type" :value="type.id">
+                              {{ type.name }}
                             </ListboxOption>
                           </ListboxOptions>
                         </div>
@@ -144,30 +156,33 @@
               </transition>
               <div class="search-suggest">
                 <div class="search-suggest-wrapper app-previews-grid">
-                  <div class="suggest" v-for="movie in movieData?.filter(m => ageSelected ? m.age === ageSelected : true).filter(m => yearSelected ? m.year === yearSelected : true).filter(m => genreSelected ? m.genres.some(genre => genre.name === genreSelected) : true).filter(m => typeSelected ? m.types.some(types => types.name === typeSelected) : true)" :key="movie.id">
-                    <router-link to="view" class="router-link flex-col">
-                      <img class="suggest-img" src="images/anime-posters/poster_3.jpg">
-                      <p class="suggest-title">Добро пожаловать в «Академию Сетон!»</p>
-                    </router-link>
+                  <div v-if="!Object.keys(search).length">ниче не нашёл</div>
+                  <div v-for="movie of search" v-bind:key="movie.id">
+                    <div class="suggest">
+                      <router-link to="view" class="router-link flex-col">
+                        <img class="suggest-img" :src="movie.banner">
+                        <p class="suggest-title">{{ movie.title }}</p>
+                      </router-link>
+                    </div>
                   </div>
-                  <!--            <div class="suggest">-->
-                  <!--              <router-link to="view" class="router-link flex-col">-->
-                  <!--                <img class="suggest-img" src="images/anime-posters/poster_20.jpg">-->
-                  <!--                <p class="suggest-title">Ясяхимэ: Принцесса‑полудемон</p>-->
-                  <!--              </router-link>-->
-                  <!--            </div>-->
-                  <!--            <div class="suggest">-->
-                  <!--              <router-link to="view" class="router-link flex-col">-->
-                  <!--                <img class="suggest-img" src="images/anime-posters/poster_21.jpg">-->
-                  <!--                <p class="suggest-title">AniHouseTV | Косячки</p>-->
-                  <!--              </router-link>-->
-                  <!--            </div>-->
-                  <!--            <div class="suggest">-->
-                  <!--              <router-link to="view" class="router-link flex-col">-->
-                  <!--                <img class="suggest-img" src="images/anime-posters/poster_24.jpg">-->
-                  <!--                <p class="suggest-title">Девы Розена</p>-->
-                  <!--              </router-link>-->
-                  <!--            </div>-->
+<!--                              <div class="suggest">-->
+<!--                                <router-link to="view" class="router-link flex-col">-->
+<!--                                  <img class="suggest-img" src="images/anime-posters/poster_20.jpg">-->
+<!--                                  <p class="suggest-title">Ясяхимэ: Принцесса‑полудемон</p>-->
+<!--                                </router-link>-->
+<!--                              </div>-->
+<!--                              <div class="suggest">-->
+<!--                                <router-link to="view" class="router-link flex-col">-->
+<!--                                  <img class="suggest-img" src="images/anime-posters/poster_21.jpg">-->
+<!--                                  <p class="suggest-title">AniHouseTV | Косячки</p>-->
+<!--                                </router-link>-->
+<!--                              </div>-->
+<!--                              <div class="suggest">-->
+<!--                                <router-link to="view" class="router-link flex-col">-->
+<!--                                  <img class="suggest-img" src="images/anime-posters/poster_24.jpg">-->
+<!--                                  <p class="suggest-title">Девы Розена</p>-->
+<!--                                </router-link>-->
+<!--                              </div>-->
                 </div>
               </div>
             </div>
@@ -180,7 +195,7 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+// import { ref } from 'vue'
 import {
   Listbox,
   ListboxButton,
@@ -207,7 +222,8 @@ export default {
       ageSelected: "",
       types: [],
       typeSelected: "",
-      movie: []
+      movie: [],
+      inputsearch: ""
     }
   },
   methods: {
@@ -222,25 +238,50 @@ export default {
    window.removeEventListener('scroll', this.handleScroll);
   },
   async mounted() {
-    const movieData = await (await fetch('http://localhost:3001/movie')).json()
+    this.movie = await (await fetch('http://localhost:3001/movie')).json()
 
-    this.genres = (await (await fetch('http://localhost:3001/genre')).json()).map(genre => genre.name)
+    this.genres = (await (await fetch('http://localhost:3001/genre')).json())
     console.log(this.genres[0])
 
-    this.ages = [...new Set(movieData.map(movie => movie.age))]
-    this.types = (await (await fetch('http://localhost:3001/type')).json()).map(type => type.name)
+    this.ages = [...new Set(this.movie.map(movie => movie.age))]
+    this.types = (await (await fetch('http://localhost:3001/type')).json())
 
 
-    this.genreSelected = ref(this.genres[0]);
-    this.ageSelected = ref(this.ages[0]);
 
-    this.years = [...new Set(movieData.map(movie => movie.year))]
-    this.yearSelected = ref(this.year[0]);
+    this.years = [...new Set(this.movie.map(movie => movie.year))]
 
-    this.typeSelected = ref(this.types[0]);
-
-    this.movie = movieData
   },
+  computed: {
+    search() {
+       // if(/*!this.inputsearch || */!this.ageSelected || !this.genreSelected || !this.yearSelected || !this.typeSelected) return [];
+     return this.movie
+         .filter(m => this.inputsearch ? m.title.includes(this.inputsearch) : true)
+         .filter(m => this.ageSelected ? Number(m.age) === Number(this.ageSelected) : true)
+          .filter(m => this.yearSelected ? m.year === this.yearSelected : true)
+          .filter(m => this.genreSelected ? m.genres.some(genre => genre.genreId === this.genreSelected) : true)
+           .filter(m => this.typeSelected ? m.typeId === this.typeSelected /*.some(types => types.id === this.typeSelected)*/ : true)
+    },
+    getGenreText() {
+      let out;
+      let i = this.genres.length;
+      while (i--) {
+        if (this.genres[i].id === this.genreSelected) {
+          out = this.genres[i].name;
+        }
+      }
+      return out;
+    },
+    getTypeText() {
+      let out;
+      let i = this.types.length;
+      while (i--) {
+        if (this.types[i].id === this.typeSelected) {
+          out = this.types[i].name;
+        }
+      }
+      return out;
+    }
+  }
 }
 </script>
 
